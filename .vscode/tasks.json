@@ -6,9 +6,12 @@
             "command": "D:\\Software\\MSYS2\\mingw64\\bin\\g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
+                "-ggdb",
                 "-g",
                 "${file}",
                 "${fileDirname}\\tgaimage.cpp",
+                "-pg",
+                "-O0",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
             ],
