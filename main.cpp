@@ -20,8 +20,8 @@ void line(int x0, int y0, int x1, int y1, TGAImage &image, TGAColor color)
 
     int dx = x1 - x0;
     int dy = y1 - y0;
-    float derror = std::abs(dy / float(dx));
-    float error = 0;
+    int derror2 = std::abs(dy) * 2;
+    int error2 = 0;
     int y = y0;
     for (int x = x0; x <= x1; x++)
     {
@@ -33,11 +33,11 @@ void line(int x0, int y0, int x1, int y1, TGAImage &image, TGAColor color)
         {
             image.set(x, y, color);
         }
-        error += derror;
-        if (error > .5)
+        error2 += derror2;
+        if (error2 > dx)
         {
             y += (y1 > y0 ? 1 : -1);
-            error -= 1.;
+            error2 -= dx * 2;
         }
     }
 }
