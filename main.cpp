@@ -119,14 +119,14 @@ void triangle(Vec2i *pts, TGAImage &image, TGAColor color)
 
 int main(int argc, char **argv)
 {
-    // if (2 == argc)
-    // {
-    //     model = new Model(argv[1]);
-    // }
-    // else
-    // {
-    //     model = new Model("obj/african_head.obj");
-    // }
+    if (2 == argc)
+    {
+        model = new Model(argv[1]);
+    }
+    else
+    {
+        model = new Model("obj/african_head.obj");
+    }
     // TGAImage image(width, height, TGAImage::RGB);
     // // line(13, 20, 80, 40, image, white);
     // for (int i = 0; i < model->nfaces(); i++)
@@ -152,9 +152,32 @@ int main(int argc, char **argv)
     // triangle(t1[0], t1[1], t1[2], image, white);
     // triangle(t2[0], t2[1], t2[2], image, green);
 
-    TGAImage frame(200, 200, TGAImage::RGB);
-    Vec2i pts[3] = {Vec2i(10, 10), Vec2i(100, 30), Vec2i(190, 160)};
-    triangle(pts, frame, TGAColor(255, 0, 0));
+    TGAImage frame(800, 800, TGAImage::RGB);
+    // Vec2i pts[3] = {Vec2i(10, 10), Vec2i(100, 30), Vec2i(190, 160)};
+    // triangle(pts, frame, TGAColor(255, 0, 0));
+
+    Vec3f light_dir(0, 0, -1); // define light_dir
+
+    for (int i = 0; i < model->nfaces(); i++)
+    {
+        std::vector<int> face = model->face(i);
+        Vec2i screen_coords[3];
+        Vec3f world_coords[3];
+        for (int j = 0; j < 3; j++)
+        {
+            Vec3f v = model->vert(face[j]);
+            screen_coords[j] = Vec2i((v.x + 1.) * width / 2., (v.y + 1.) * height / 2.);
+            world_coords[j] = v;
+        }
+        Vec3f n = (world_coords[2] - world_coords[0]) ^ (world_coords[1] - world_coords[0]);
+        n.normalize();
+        float intensity = n * light_dir;
+        Vec2i pts[3] = {screen_coords[0], screen_coords[1], screen_coords[2]};
+        if (intensity > 0)
+        {
+            triangle(pts, frame, TGAColor(intensity * 255, intensity * 255, intensity * 255, 255));
+        }
+    }
 
     frame.flip_vertically(); // i want to have the origin at the left bottom corner of the image
     frame.write_tga_file("output.tga");
